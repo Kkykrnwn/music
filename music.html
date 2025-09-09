@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pemutar Musik</title>
+  <style>
+  
+    :root {
+    --glow1: #ff0080;
+    --glow2: #ff8000;
+    --glow3: #00ffcc;
+    --glow4: #0080ff;
+  }
+  
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    transition: background-color 0.3s, color 0.3s;
+    color: #fff;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  body.light {
+    background-color: #f0f0f0; /* Latar belakang lebih terang */
+    color: #333; /* Teks lebih gelap */
+  }
+  
+  .music-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    padding: 20px;
+    border-radius: 16px;
+    background-color: inherit;
+    position: relative;
+    box-shadow: 0 0 25px var(--glow1);
+    animation: glowRGBBright 5s ease-in-out infinite;
+  }
+  
+  @keyframes glowRGBBright {
+    0%   { box-shadow: 0 0 25px var(--glow1); }
+    25%  { box-shadow: 0 0 25px var(--glow2); }
+    50%  { box-shadow: 0 0 25px var(--glow3); }
+    75%  { box-shadow: 0 0 25px var(--glow4); }
+    100% { box-shadow: 0 0 25px var(--glow1); }
+  }
+  
+  .hacker-top-bar {
+    position: fixed;
+    top: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #00ff00;
+    font-size: 16px;
+    z-index: 1000;
+  }
+  
+  /* Penyesuaian tema terang pada hacker-top-bar */
+  body.light .hacker-top-bar {
+    color: #008000; /* Warna teks hijau lebih gelap untuk tema terang */
+  }
+  
+  
+  .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    cursor: pointer;
+    font-size: 24px;
+  }
+  
+  .song-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  /* Penyesuaian tema terang pada judul lagu */
+  body.light .song-title {
+      color: #000; /* Judul lagu menjadi hitam */
+  }
+  
+  .cover-container {
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    animation: glowRGBBright 5s ease-in-out infinite;
+  }
+  
+  .cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .rotate {
+    animation: rotate 15s linear infinite, glowRGBBright 6s ease-in-out infinite;
+  }
+  
+  @keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .progress-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+  
+  #progress {
+    flex: 1;
+    margin: 0 10px;
+    cursor: pointer;
+    accent-color: var(--glow3);
+  }
+  
+  /* Penyesuaian tema terang pada progress bar */
+  body.light #progress {
+      accent-color: #0080ff; /* Warna accent yang lebih sesuai */
+  }
+  
+  .controls, .bottom-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .controls button, .bottom-controls button {
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .controls button:hover,
+  .bottom-controls button:hover {
+    transform: scale(1.1);
+    animation: glowRGBBright 3s ease-in-out infinite;
+  }
+  
+  /* Penyesuaian tema terang pada tombol kontrol */
+  body.light .controls button, body.light .bottom-controls button {
+      color: #555; /* Warna teks tombol lebih gelap */
+  }
+  
+  .playlist-dropdown {
+    margin-top: 20px;
+  }
+  
+  #dropdown-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  
+  #dropdown-icon.rotated {
+    transform: rotate(-90deg);
+  }
+  
+  /* --- Perbaikan dan Penengahan pada #playlist --- */
+  #playlist {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 10px auto 0 auto; /* Menengahkan dan memberi jarak */
+    width: 80%; /* Atur lebar */
+    max-width: 300px; /* Batasi lebar maksimal */
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+    background-color: #222; /* Tambahkan background agar terlihat jelas */
+    border-radius: 8px; /* Sudut sedikit melengkung */
+  }
+  
+  #playlist.hidden {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  
+  #playlist li {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: left;
+  }
+  
+  #playlist li:hover {
+    background: rgba(0,0,0,0.1);
+  }
+  
+  #playlist li.playing {
+    font-weight: bold;
+    background-color: rgba(0, 128, 255, 0.15);
+    border-left: 4px solid dodgerblue;
+  }
+  
+  /* Penyesuaian tema terang pada daftar lagu */
+  body.light #playlist {
+      background-color: #fff; /* Latar belakang putih */
+  }
+  
+  body.light #playlist li {
+      color: #555; /* Warna teks lebih gelap */
+  }
+  
+  body.light #playlist li:hover {
+      background-color: #e6e6e6; /* Hover lebih terang */
+  }
+  
+  body.light #playlist li.playing {
+      background-color: rgba(0, 128, 255, 0.05); /* Sedikit lebih redup */
+      border-left: 4px solid #0080ff; /* Warna border lebih terang */
+  }
+  
+  .info-container {
+    position: relative;
+    margin-top: 10px;
+  }
+  
+  .info-text {
+    position: relative;
+    display: block;
+    margin: 5px auto;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #333;
+    color: #fff;
+    font-size: 12px;
+    animation: fadeOut 2.5s ease forwards;
+    width: fit-content;
+    opacity: 0;
+  }
+  
+  @keyframes fadeOut {
+    0% { opacity: 0; transform: translateY(10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+  
+  /* Scrollbar khusus di playlist */
+  #playlist::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  #playlist::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  #playlist::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--glow1), var(--glow4));
+    border-radius: 3px;
+  }
+  
+  #playlist::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(var(--glow2), var(--glow3));
+  }
+  
+  /* Penyesuaian tema terang pada scrollbar playlist */
+  body.light #playlist::-webkit-scrollbar-thumb {
+      background: linear-gradient(#aaa, #ccc); /* Warna abu-abu yang lebih terang */
+  }
+  
+  body.light #playlist::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(#888, #aaa); /* Hover lebih gelap sedikit */
+  }
+  
+  
+      /* --- Perbaikan dan Penengahan untuk Dropdown Kustom Playlist --- */
+      .playlist-select-container {
+        margin: 15px auto 10px auto; /* Menengahkan kontainer dan memberi jarak */
+        position: relative;
+        /* Menggunakan inline-block untuk menjaga ukuran ke konten, namun memerlukan text-align: center pada parent jika ingin menengahkan header */
+        display: block; /* Agar margin auto bekerja */
+        width: 80%; /* Mengatur lebar kontainer dropdown */
+        max-width: 250px; /* Membatasi lebar maksimal */
+      }
+  
+      .custom-dropdown-header {
+        padding: 10px 15px;
+        border-radius: 8px;
+        background-color: #333;
+        color: #fff;
+        border: 1px solid var(--glow1);
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        width: 100%; /* Agar header mengisi container */
+        box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+      }
+  
+      .custom-dropdown-header:hover {
+        border-color: var(--glow3);
+        background-color: #444;
+        transform: translateY(-2px);
+      }
+  
+      .custom-dropdown-header span.arrow {
+        transition: transform 0.3s ease;
+      }
+  
+      .custom-dropdown-header span.arrow.rotated {
+        transform: rotate(-90deg);
+      }
+  
+      .custom-dropdown-content {
+        position: absolute;
+        top: 100%;
+        /* --- Kunci perbaikan di sini: Menengahkan elemen absolut --- */
+        left: 50%; /* Posisikan titik awal di tengah parent */
+        transform: translateX(-50%); /* Geser ke kiri setengah lebar elemen itu sendiri */
+        width: 100%; /* Ambil lebar penuh dari parent container */
+        box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+  
+        background-color: #222;
+        border: 1px solid var(--glow2);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 999;
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        /* transform: translateY(-10px); */ /* hapus ini atau gabung dengan translateX */
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+      }
+  
+      .custom-dropdown-content.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0); /* Gabungkan transform */
+      }
+  
+      .custom-dropdown-content li {
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        color: var(--glow3);
+        text-align: left;
+      }
+  
+      .custom-dropdown-content li:hover {
+        background-color: var(--glow4);
+        color: #fff;
+      }
+  
+      /* Scrollbar untuk dropdown kustom */
+      .custom-dropdown-content::-webkit-scrollbar {
+        width: 6px;
+      }
+  
+      .custom-dropdown-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+  
+      .custom-dropdown-content::-webkit-scrollbar-thumb {
+        background: linear-gradient(var(--glow1), var(--glow4));
+        border-radius: 3px;
+      }
+  
+      .custom-dropdown-content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(var(--glow2), var(--glow3));
+      }
+  
+      /* Penyesuaian tema terang pada dropdown kustom */
+      body.light .custom-dropdown-header {
+        background-color: #f0f0f0;
+        color: #333;
+        border-color: #ccc;
+      }
+      body.light .custom-dropdown-header:hover {
+          background-color: #e0e0e0;
+      }
+      body.light .custom-dropdown-content {
+        background-color: #fff;
+        border-color: #ddd;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      body.light .custom-dropdown-content li {
+        color: #555;
+      }
+      body.light .custom-dropdown-content li:hover {
+        background-color: #e6e6e6;
+        color: #000;
+      }
+  
+      /* Penyesuaian tema terang pada scrollbar dropdown kustom */
+      body.light .custom-dropdown-content::-webkit-scrollbar-thumb {
+          background: linear-gradient(#aaa, #ccc);
+      }
+  
+      body.light .custom-dropdown-content::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(#888, #aaa);
+      }
+  
+      #dropdown-toggle {
+          display: block;
+          margin: 20px auto 0 auto;
+          width: fit-content;
+          font-size: 18px;
+          background: none;
+          border: none;
+          color: inherit;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          padding: 8px 15px;
+          border-radius: 8px;
+          border: 1px solid var(--glow1);
+      }
+  
+      #dropdown-toggle:hover {
+          transform: scale(1.05);
+          animation: glowRGBBright 3s ease-in-out infinite;
+      }
+  
+      /* Penyesuaian tema terang pada tombol dropdown utama */
+       body.light #dropdown-toggle {
+          background-color: #f0f0f0;
+          color: #333;
+          border-color: #ccc;
+      }
+       body.light #dropdown-toggle:hover {
+          background-color: #e0e0e0;
+      }
+  
+     
+
+  </style>
+</head>
+<body>
+<div class="hacker-top-bar">
+    <div class="clock" id="clock">00:00:00</div>
+    <div class="date" id="date">Loading date...</div>
+  </div>
+  <div class="music-container">
+    <div class="theme-toggle" id="theme-toggle">🌙</div>
+    <div id="song-title" class="song-title">Judul Lagu</div>
+    <div class="cover-container">
+      <img src="cover.jpg" id="cover" alt="Cover" class="cover" />
+    </div>
+    <div class="progress-info">
+      <span id="current-time">0:00</span>
+      <input type="range" id="progress" value="0" />
+      <span id="duration">0:00</span>
+    </div>
+    <div class="controls">
+      <button id="prev">⏮️</button>
+      <button id="play">▶️</button>
+      <button id="next">⏭️</button>
+    </div>
+    <div class="bottom-controls">
+      <button id="mode">🎶</button>
+    </div>
+    <div class="info-container" id="info-container"></div>
+
+    <div class="playlist-select-container">
+        <div class="custom-dropdown-header" id="custom-playlist-dropdown-header">
+            <span id="selected-playlist-name">Pilih Playlist</span>
+            <span class="arrow">▼</span>
+        </div>
+        <ul class="custom-dropdown-content" id="custom-playlist-dropdown-content">
+            </ul>
+    </div>
+
+    <button id="dropdown-toggle">
+        Daftar Lagu <span id="dropdown-icon">▼</span>
+    </button>
+
+    <ul id="playlist" class="hidden"></ul>
+  </div>
+
+  <audio id="audio"></audio>
+  
+  <script src="arabic.js"></script>
+  <script src="jawa.js"></script>
+  <script src="old.js"></script>
+
+  <script>
+    // Kode pemanggil dan deklarasi objek allPlaylists
+    const allPlaylists = {
+      "Arabic": arabicPlaylist,
+      "jawa": jawaPlaylist,
+      "Old": oldPlaylist,
+    };
+
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const nextBtn = document.getElementById('next');
+    const prevBtn = document.getElementById('prev');
+    const progress = document.getElementById('progress');
+    const cover = document.getElementById('cover');
+    const durationEl = document.getElementById('duration');
+    const currentTimeEl = document.getElementById('current-time');
+    const songListElement = document.getElementById('playlist'); // Ini adalah UL untuk daftar lagu
+    const dropdownToggle = document.getElementById('dropdown-toggle'); // Ini adalah TOMBOL untuk menampilkan UL daftar lagu
+    const themeToggle = document.getElementById('theme-toggle');
+    const modeBtn = document.getElementById('mode');
+    const infoContainer = document.getElementById('info-container');
+    const titleEl = document.getElementById('song-title');
+
+    // Variabel untuk dropdown kustom playlist
+    const customPlaylistDropdownHeader = document.getElementById('custom-playlist-dropdown-header');
+    const selectedPlaylistNameEl = document.getElementById('selected-playlist-name');
+    const customPlaylistDropdownContent = document.getElementById('custom-playlist-dropdown-content');
+    const customPlaylistDropdownArrow = customPlaylistDropdownHeader.querySelector('.arrow');
+
+
+    let currentSongIndex = 0;
+    let isPlaying = false;
+    let playMode = 0;
+    let repeatOncePlayed = false;
+
+    let currentSongs = [];
+    let currentPlaylistName = "";
+
+    /**
+     * Mengisi dropdown kustom dengan opsi playlist dari allPlaylists.
+     */
+    function populateCustomPlaylistDropdown() {
+      customPlaylistDropdownContent.innerHTML = ''; // Kosongkan daftar opsi yang ada
+      for (const playlistName in allPlaylists) {
+        const li = document.createElement('li');
+        li.textContent = playlistName;
+        li.dataset.playlistName = playlistName; // Simpan nama playlist di data attribute
+        li.onclick = () => {
+          loadPlaylist(playlistName);
+          // Sembunyikan dropdown setelah memilih
+          customPlaylistDropdownContent.classList.remove('show');
+          customPlaylistDropdownArrow.classList.remove('rotated');
+        };
+        customPlaylistDropdownContent.appendChild(li);
+      }
+      // Atur playlist default saat pertama kali dimuat
+      const defaultPlaylistName = Object.keys(allPlaylists)[0];
+      if (defaultPlaylistName) {
+        loadPlaylist(defaultPlaylistName);
+      }
+    }
+
+    /**
+     * Memuat lagu dari playlist yang dipilih.
+     * @param {string} playlistName - Nama playlist yang akan dimuat.
+     */
+    function loadPlaylist(playlistName) {
+      currentPlaylistName = playlistName;
+      currentSongs = allPlaylists[playlistName];
+      selectedPlaylistNameEl.textContent = playlistName; // Update teks di header dropdown
+      
+      if (!currentSongs || currentSongs.length === 0) {
+        console.warn(`Playlist "${playlistName}" tidak ditemukan atau kosong.`);
+        currentSongs = [];
+        songListElement.innerHTML = '';
+        titleEl.textContent = "Tidak Ada Lagu";
+        cover.src = "cover.jpg";
+        audio.src = "";
+        pauseSong();
+        return;
+      }
+      
+      currentSongIndex = 0; // Reset ke lagu pertama di playlist baru
+      renderSongList(); // Perbarui tampilan daftar lagu
+      loadSong(currentSongIndex); // Muat lagu pertama dari playlist baru
+      if (isPlaying) { // Jika sedang memutar, lanjutkan putar
+        playSong();
+      } else {
+        pauseSong();
+      }
+    }
+
+    /**
+     * Merender (membuat) daftar lagu di elemen `ul#playlist`.
+     */
+    function renderSongList() {
+      songListElement.innerHTML = ''; // Kosongkan daftar lagu yang ada
+      currentSongs.forEach((song, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${song.name} - ${song.artist}`;
+        li.onclick = () => {
+          currentSongIndex = index;
+          repeatOncePlayed = false;
+          loadSong(currentSongIndex);
+          playSong();
+          songListElement.classList.add('hidden'); // fungsi daftar lagu otomatis tertutup setelah memilih
+          document.getElementById('dropdown-icon').classList.remove('rotated'); // Kembalikan ikon dropdown
+       };
+        songListElement.appendChild(li);
+      });
+    }
+
+    /**
+     * Memuat detail lagu ke pemutar.
+     * @param {number} index - Indeks lagu dalam currentSongs.
+     */
+    function loadSong(index) {
+      if (currentSongs.length === 0) {
+        titleEl.textContent = "Tidak Ada Lagu";
+        cover.src = "cover.jpg";
+        audio.src = "";
+        return;
+      }
+
+      const song = currentSongs[index];
+      audio.src = song.src;
+      cover.src = song.cover;
+      titleEl.textContent = song.name;
+      document.querySelectorAll('#playlist li').forEach((li, idx) => {
+        li.classList.toggle('playing', idx === index);
+      });
+    }
+
+    /**
+     * Memutar lagu yang sedang aktif.
+     */
+    function playSong() {
+      if (currentSongs.length === 0) return; // Jangan mainkan jika tidak ada lagu
+      audio.play();
+      isPlaying = true;
+      playBtn.textContent = '⏸️';
+      cover.classList.add('rotate');
+    }
+
+    /**
+     * Menghentikan lagu yang sedang aktif.
+     */
+    function pauseSong() {
+      audio.pause();
+      isPlaying = false;
+      playBtn.textContent = '▶️';
+      cover.classList.remove('rotate');
+    }
+
+    /**
+     * Memutar lagu berikutnya di playlist.
+     */
+    function nextSong() {
+      if (currentSongs.length === 0) return;
+
+      if (playMode === 3) { // Acak
+        currentSongIndex = Math.floor(Math.random() * currentSongs.length);
+      } else { // Normal, Ulang Semua, Ulang Satu
+        currentSongIndex = (currentSongIndex + 1) % currentSongs.length;
+      }
+      repeatOncePlayed = false;
+      loadSong(currentSongIndex);
+      playSong();
+    }
+
+    /**
+     * Memutar lagu sebelumnya di playlist.
+     */
+    function prevSong() {
+      if (currentSongs.length === 0) return;
+
+      currentSongIndex = (currentSongIndex - 1 + currentSongs.length) % currentSongs.length;
+      repeatOncePlayed = false;
+      loadSong(currentSongIndex);
+      playSong();
+    }
+
+    // Event Listeners untuk kontrol pemutar musik
+    playBtn.onclick = () => isPlaying ? pauseSong() : playSong();
+    nextBtn.onclick = nextSong;
+    prevBtn.onclick = prevSong;
+
+    audio.onended = () => {
+      if (playMode === 1 && !repeatOncePlayed) { // Ulang Satu
+        repeatOncePlayed = true;
+        playSong();
+      } else if (playMode === 2 || playMode === 3) { // Ulang Semua atau Acak
+        nextSong();
+      } else { // playMode === 0 (Normal)
+        if (currentSongIndex < currentSongs.length - 1) {
+          nextSong();
+        } else {
+          currentSongIndex = 0; // Kembali ke lagu pertama
+          loadSong(currentSongIndex);
+          pauseSong(); // Berhenti setelah playlist selesai
+          showInfo("Playlist Selesai");
+        }
+      }
+    };
+
+    progress.addEventListener('input', () => {
+      audio.currentTime = (progress.value / 100) * audio.duration;
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.value = percent || 0;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    /**
+     * Memformat waktu dari detik menjadi format MM:SS.
+     * @param {number} time - Waktu dalam detik.
+     * @returns {string} Waktu dalam format MM:SS.
+     */
+    function formatTime(time) {
+      const min = Math.floor(time / 60) || 0;
+      const sec = Math.floor(time % 60) || 0;
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    // Event listener untuk TOGGLE DAFTAR LAGU UTAMA (UL#PLAYLIST)
+    dropdownToggle.onclick = () => {
+      songListElement.classList.toggle('hidden');
+      const icon = document.getElementById('dropdown-icon');
+      icon.classList.toggle('rotated', !songListElement.classList.contains('hidden'));
+    };
+
+    // Event listener untuk header dropdown kustom playlist (untuk membuka/menutup)
+    customPlaylistDropdownHeader.onclick = () => {
+      customPlaylistDropdownContent.classList.toggle('show');
+      customPlaylistDropdownArrow.classList.toggle('rotated');
+      // Pastikan daftar lagu utama (ul#playlist) tertutup saat membuka dropdown playlist kustom
+      songListElement.classList.add('hidden');
+      document.getElementById('dropdown-icon').classList.remove('rotated');
+    };
+
+    // Tutup dropdown kustom playlist dan daftar lagu utama jika klik di luar area terkait
+    document.addEventListener('click', (event) => {
+      // Logika untuk menutup dropdown playlist kustom
+      if (!customPlaylistDropdownHeader.contains(event.target) && !customPlaylistDropdownContent.contains(event.target)) {
+        customPlaylistDropdownContent.classList.remove('show');
+        customPlaylistDropdownArrow.classList.remove('rotated');
+      }
+
+      // Logika tambahan untuk menutup daftar lagu utama (ul#playlist)
+      if (!dropdownToggle.contains(event.target) && !songListElement.contains(event.target)) {
+        songListElement.classList.add('hidden');
+        document.getElementById('dropdown-icon').classList.remove('rotated');
+      }
+    });
+
+
+    /**
+     * Memperbarui waktu dan tanggal di hacker top bar.
+     */
+    function updateDateTime() {
+      const now = new Date();
+      const clock = document.getElementById("clock");
+      const date = document.getElementById("date");
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      clock.textContent = `${hours}:${minutes}:${seconds}`;
+      date.textContent = `${day}/${month}/${year}`;
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime(); // Panggil sekali saat start agar tidak ada delay awal
+
+    themeToggle.onclick = () => {
+      document.body.classList.toggle('light');
+      themeToggle.textContent = document.body.classList.contains('light') ? '🌞' : '🌙';
+    };
+
+    modeBtn.onclick = () => {
+      playMode = (playMode + 1) % 4;
+      repeatOncePlayed = false;
+      const modeText = ["Putar Normal", "Ulang Satu", "Ulang Semua", "Acak"];
+      showInfo(modeText[playMode]);
+    };
+
+    /**
+     * Menampilkan pesan informasi temporer.
+     * @param {string} text - Teks informasi yang akan ditampilkan.
+     */
+    function showInfo(text) {
+      const info = document.createElement('div');
+      info.className = 'info-text';
+      info.textContent = text;
+      infoContainer.appendChild(info);
+      setTimeout(() => info.remove(), 2500);
+    }
+
+    /**
+     * Mengganti status play/pause lagu.
+     */
+    function playPauseSong() {
+      isPlaying ? pauseSong() : playSong();
+    }
+    /*notifikasi*/
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'Judul Lagu',
+        artist: 'Nama Artis',
+        album: 'Nama Album',
+        artwork: [
+          { src: 'cover.jpg', sizes: '512x512', type: 'image/jpeg' }
+        ]
+      });
+
+      navigator.mediaSession.setActionHandler('play', function() {
+        // logika play
+        audio.play();
+      });
+
+      navigator.mediaSession.setActionHandler('pause', function() {
+        // logika pause
+        audio.pause();
+      });
+
+      navigator.mediaSession.setActionHandler('previoustrack', function() {
+        // logika sebelumnya
+        prevSong();
+      });
+
+      navigator.mediaSession.setActionHandler('nexttrack', function() {
+        // logika berikutnya
+        nextSong();
+      });
+    }
+
+    // Event listener untuk shortcut keyboard
+    document.addEventListener('keydown', function(e) {
+      const tag = e.target.tagName.toLowerCase();
+      // Jangan proses shortcut jika user sedang mengetik di input/textarea
+      if (tag === 'input' || tag === 'textarea') return;
+
+      switch (e.key.toLowerCase()) {
+        case ' ': // Spasi untuk play/pause
+          e.preventDefault();
+          playPauseSong();
+          break;
+        case 'arrowleft': // Panah kiri untuk mundur 5 detik
+          e.preventDefault();
+          audio.currentTime = Math.max(0, audio.currentTime - 5);
+          showInfo('<< Mundur 5 detik');
+          break;
+        case 'arrowright': // Panah kanan untuk maju 5 detik
+          e.preventDefault();
+          audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+          showInfo('>> Maju 5 detik');
+          break;
+        case 'm': // 'M' untuk mengubah mode putar
+          e.preventDefault();
+          modeBtn.click();
+          break;
+        case 'l': // 'L' untuk toggle daftar lagu utama
+          e.preventDefault();
+          dropdownToggle.click();
+          break;
+        case 'n': // 'N' untuk lagu berikutnya
+          e.preventDefault();
+          nextSong();
+          break;
+        case 'p': // 'P' untuk lagu sebelumnya
+          e.preventDefault();
+          prevSong();
+          break;
+      }
+    });
+
+    // Panggil fungsi inisialisasi saat script pertama kali dimuat
+    populateCustomPlaylistDropdown();
+  </script>
+</body>
+</html>
