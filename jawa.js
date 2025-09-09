@@ -10,7 +10,7 @@ const jawaPlaylist = [
         name: "Angel",
         artist: "Yeni Inka",
         src: "jawa/angel.mp3",
-        cover: "cover/Yeni Inka.png"
+        cover: "cover/yeni inka.png"
     },
     {
         name: "Angin Dalu",
