@@ -10,7 +10,7 @@ const jawaPlaylist = [
         name: "Angel",
         artist: "Yeni Inka",
         src: "jawa/angel.mp3",
-        cover: "cover/yeni inka.png"
+        cover: "cover/Yeni Inka.png"
     },
     {
         name: "Angin Dalu",
@@ -112,7 +112,7 @@ const jawaPlaylist = [
         name: "Kartonyono",
         artist: "Denny Caknan",
         src: "jawa/kartonyono.mp3",
-        cover: "cover/denny caknan.png"
+        cover: "cover/kartonyono.png"
     },
     {
         name: "Kelingan Mantan",
@@ -178,7 +178,7 @@ const jawaPlaylist = [
         name: "Los Dol",
         artist: "Denny Caknan",
         src: "jawa/los dol.mp3",
-        cover: "cover/denny caknan.png"
+        cover: "cover/los dol.png"
     },
     {
         name: "Mendung Tanpo Udan",
@@ -268,7 +268,7 @@ const jawaPlaylist = [
         name: "Satru",
         artist: "Denny Caknan",
         src: "jawa/satru.mp3",
-        cover: "cover/denny caknan.png"
+        cover: "cover/satru.png"
     },
     {
         name: "Sayang",
@@ -281,6 +281,12 @@ const jawaPlaylist = [
         artist: "Guyon Waton",
         src: "jawa/sebatas teman.mp3",
         cover: "cover/guyon waton.png"
+    },
+    {
+        name: "Sugeng Dalu",
+        artist: "Guyon Waton",
+        src: "jawa/sugeng dalu.mp3",
+        cover: "cover/sugeng dalu.png"
     },
     {
         name: "Takdire Pisah",
