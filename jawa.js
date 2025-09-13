@@ -78,6 +78,12 @@ const jawaPlaylist = [
         src: "jawa/dumes.mp3",
         cover: "cover/dumes.png"
     },
+        {
+        name: "Full Senyum Sayang",
+        artist: "Evan Loss",
+        src: "jawa/full senyum sayang.mp3",
+        cover: "cover/full senyum sayang.png"
+    },
     {
         name: "Gampil",
         artist: "Guyon Waton",
@@ -195,7 +201,7 @@ const jawaPlaylist = [
     {
         name: "Nemen",
         artist: "Guyon Waton",
-        src: "jawa/nemen guyon.mp3",
+        src: "jawa/nemen guyon waton.mp3",
         cover: "cover/guyon waton.png"
     },
     {
