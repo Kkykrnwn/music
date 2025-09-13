@@ -1,345 +1,183 @@
-// playlist_jawa.js
-const jawaPlaylist = [
-    {
-        name: "Aku Ikhlas",
-        artist: "Aftershine",
-        src: "jawa/aku ikhlas.mp3",
-        cover: "cover/aftershine.png"
-    },
-    {
-        name: "Angel",
-        artist: "Yeni Inka",
-        src: "jawa/angel.mp3",
-        cover: "cover/Yeni Inka.png"
-    },
-    {
-        name: "Angin Dalu",
-        artist: "NDX A.K.A",
-        src: "jawa/angin dalu.mp3",
-        cover: "cover/angin dalu.png"
-    },
-    {
-        name: "Apa Kabar Mantan",
-        artist: "NDX A.K.A",
-        src: "jawa/apa kabar mantan.mp3",
-        cover: "cover/apa kabar mantan.png"
-    },
-    {
-        name: "Banyu Surgo",
-        artist: "NDX A.K.A",
-        src: "jawa/banyu surgo.mp3",
-        cover: "cover/banyu surgo.png"
-    },
-    {
-        name: "Bojo Galak",
-        artist: "Dinar Fvnky V2",
-        src: "jawa/bojo galak.mp3",
-        cover: "cover/bojo galak.png"
-    },
-    {
-        name: "Bojoku Ketikung",
-        artist: "NDX A.K.A",
-        src: "jawa/bojoku ketikung.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
-        name: "Cerito Loro",
-        artist: "Happy Asmara",
-        src: "jawa/cerito loro.mp3",
-        cover: "cover/cerito loro.png"
-    },
-    {
-        name: "Cintamu Tak Terbatas waktu",
-        artist: "NDX A.K.A",
-        src: "jawa/cintamu tak terbatas waktu.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
-        name: "Crito Mustahil",
-        artist: "Guyon Waton",
-        src: "jawa/crito mustahil.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Dalan Liyane",
-        artist: "Guyon Waton",
-        src: "jawa/dalan liyane.mp3",
-        cover: "cover/guyon waton2.png"
-    },
-    {
-        name: "Ditinggal Rabi",
-        artist: "NDX A.K.A",
-        src: "jawa/ditinggal rabi.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
-        name: "Dumes",
-        artist: "Wawes, Guyon Waton",
-        src: "jawa/dumes.mp3",
-        cover: "cover/dumes.png"
-    },
-        {
-        name: "Full Senyum Sayang",
-        artist: "Evan Loss",
-        src: "jawa/full senyum sayang.mp3",
-        cover: "cover/full senyum sayang.png"
-    },
-    {
-        name: "Gampil",
-        artist: "Guyon Waton",
-        src: "jawa/gampil.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Infone Maseh",
-        artist: "Kalia Siska",
-        src: "jawa/infone maseh.mp3",
-        cover: "cover/infone maseh.png"
-    },
-    {
-        name: "Jaran Goyang",
-        artist: "NDX A.K.A",
-        src: "jawa/jaran goyang.mp3",
-        cover: "cover/jaran goyang.png"
-    },
-    {
-        name: "Kalah",
-        artist: "Aftershine",
-        src: "jawa/kalah.mp3",
-        cover: "cover/kalah.png"
-    },
-    {
-        name: "Kalih Welasku",
-        artist: "Denny Caknan",
-        src: "jawa/kalih welasku.mp3",
-        cover: "cover/kalih welasku.png"
-    },
-    {
-        name: "Kartonyono",
-        artist: "Denny Caknan",
-        src: "jawa/kartonyono.mp3",
-        cover: "cover/kartonyono.png"
-    },
-    {
-        name: "Kelingan Mantan",
-        artist: "NDX A.K.A",
-        src: "jawa/kelingan mantan.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
-        name: "Kimcil Kepolen",
-        artist: "NDX A.K.A",
-        src: "jawa/kimcil kepolen.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
-        name: "Kisinan",
-        artist: "Masdddho",
-        src: "jawa/kisinan.mp3",
-        cover: "cover/kisinan.png"
-    },
-    {
-        name: "Kisinan 2",
-        artist: "Masdddho",
-        src: "jawa/kisinan2.mp3",
-        cover: "cover/kisinan2.png"
-    },
-    {
-        name: "Klebus",
-        artist: "Guyon Waton",
-        src: "jawa/klebus.mp3",
-        cover: "cover/guyon waton2.png"
-    },
-    {
-        name: "Kok Iso Yo?",
-        artist: "Guyon Waton",
-        src: "jawa/kok iso yo.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Konco Mesra",
-        artist: "Nella Kharisma",
-        src: "jawa/konco mesra.mp3",
-        cover: "cover/konco mesra.png"
-    },
-    {
-        name: "Korban Janji",
-        artist: "Guyon Waton",
-        src: "jawa/korban janji.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Koyo Jogja Istimewa",
-        artist: "Ndarboy Genk",
-        src: "jawa/koyo jogja istimewa.mp3",
-        cover: "cover/koyo jogja.png"
-    },
-    {
-        name: "Lamunan",
-        artist: "Niken Salindri",
-        src: "jawa/lamunan.mp3",
-        cover: "cover/lamunan.png"
-    },
-    {
-        name: "Los Dol",
-        artist: "Denny Caknan",
-        src: "jawa/los dol.mp3",
-        cover: "cover/los dol.png"
-    },
-    {
-        name: "Mendung Tanpo Udan",
-        artist: "Ndarboy Genk",
-        src: "jawa/mendung tanpo udan.mp3",
-        cover: "cover/mendung tanpo udan.png"
-    },
-    {
-        name: "Nemen",
-        artist: "NDX A.K.a",
-        src: "jawa/nemen ndx.mp3",
-        cover: "cover/nemen.png"
-    },
-    {
-        name: "Nemen",
-        artist: "Guyon Waton",
-        src: "jawa/nemen guyon waton.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Nemu",
-        artist: "Gilga Sahid",
-        src: "jawa/nemu.mp3",
-        cover: "cover/nemu.png"
-    },
-    {
-        name: "Ngertenono Ati",
-        artist: "NDX A.K.A",
-        src: "jawa/ngertenono ati.mp3",
-        cover: "cover/ngertenono ati.png"
-    },
-    {
-        name: "Ngopi Maszeh",
-        artist: "Happy Asmara",
-        src: "jawa/ngopi maszeh.mp3",
-        cover: "cover/ngopi maszeh.png"
-    },
-    {
-        name: "Nresnani",
-        artist: "Lavora",
-        src: "jawa/nresnani.mp3",
-        cover: "cover/nresnani.png"
-    },
-    {
-        name: "Pelanggaran",
-        artist: "Guyon Waton",
-        src: "jawa/pelanggaran.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Pingal",
-        artist: "Guyon Waton",
-        src: "jawa/pingal.mp3",
-        cover: "cover/guyon waton2.png"
-    },
-    {
-        name: "Piwales Tresno",
-        artist: "NDX A.K.A",
-        src: "jawa/piwales tresno.mp3",
-        cover: "cover/piwales tresno.png"
-    },
-    {
-        name: "Rasah Bali",
-        artist: "Lavora",
-        src: "jawa/rasah bali.mp3",
-        cover: "cover/rasah bali.png"
-    },
-    {
-        name: "Rungkad",
-        artist: "Happy Asmara",
-        src: "jawa/rungkad.mp3",
-        cover: "cover/rungkad.png"
-    },
-    {
-        name: "Saktenane",
-        artist: "Vadesta",
-        src: "jawa/saktenane.mp3",
-        cover: "cover/saktenane.png"
-    },
-    {
-        name: "Sanes",
-        artist: "Guyon Waton",
-        src: "jawa/sanes.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Satru",
-        artist: "Denny Caknan",
-        src: "jawa/satru.mp3",
-        cover: "cover/satru.png"
-    },
-    {
-        name: "Sayang",
-        artist: "Via Valen",
-        src: "jawa/sayang.mp3",
-        cover: "cover/sayang.png"
-    },
-    {
-        name: "Sebatas Teman",
-        artist: "Guyon Waton",
-        src: "jawa/sebatas teman.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Sugeng Dalu",
-        artist: "Guyon Waton",
-        src: "jawa/sugeng dalu.mp3",
-        cover: "cover/sugeng dalu.png"
-    },
-    {
-        name: "Takdire Pisah",
-        artist: "Diorama",
-        src: "jawa/takdire pisah.mp3",
-        cover: "cover/takdire pisah.png"
-    },
-    {
-        name: "Tewas Tertimbun Masa Lalu",
-        artist: "NDX A.K.A",
-        src: "jawa/tewas tertimbun masa lalu.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
-        name: "Top Topan",
-        artist: "Happy Asmara",
-        src: "jawa/top topan.mp3",
-        cover: "cover/top topan.png"
-    },
-    {
-        name: "Tresno Liyane",
-        artist: "Northsle",
-        src: "jawa/tresno liyane.mp3",
-        cover: "cover/tresno liyane.png"
-    },
-    {
-        name: "Tresno Tekan Mati",
-        artist: "NDX A.K.A",
-        src: "jawa/tresno tekan mati.mp3",
-        cover: "cover/tresno tekan mati.png"
-    },
-    {
-        name: "Widodari",
-        artist: "Denny Caknan",
-        src: "jawa/widodari.mp3",
-        cover: "cover/widodari.png"
-    },
-    {
-        name: "Wirang",
-        artist: "Guyon Waton",
-        src: "jawa/wirang.mp3",
-        cover: "cover/guyon waton.png"
-    },
-    {
-        name: "Yowes Modaro",
-        artist: "Aftershine",
-        src: "jawa/yowes modaro.mp3",
-        cover: "cover/aftershine.png"
-    }
+// playlist_arabic.js
+const arabicPlaylist = [
+  {
+    name: "Aisyah Istri Rasulullah",
+    artist: "Anisa Rahman",
+    src: "arabic/aisyah istri rasulullah.mp3",
+    cover: "cover/anisa rahman.png",
+  },
+  {
+    name: "Al Hijrotu",
+    artist: "Adzando Davema",
+    src: "arabic/al hijrotu.mp3",
+    cover: "cover/adzando davema.png",
+  },
+   {
+    name: "Allahi Allah Kiya Karo",
+    artist: "Maher Zain",
+    src: "arabic/allahi allah kiya karo.mp3",
+    cover: "cover/maher zain.png",
+  },
+  {
+    name: "Assalamu'alaika",
+    artist: "Maher Zain",
+    src: "arabic/assalamu'alaika.mp3",
+    cover: "cover/maher zain.png",
+  },
+  {
+    name: "Casablanca",
+    artist: "Nuha Bahrin, Naufal Azrin",
+    src: "arabic/casablanca.mp3",
+    cover: "cover/casablanca.png",
+  },
+  {
+    name: "Deen Assalam",
+    artist: "Nissa Sabyan",
+    src: "arabic/deen assalam.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+  {
+    name: "Ghannili",
+    artist: "Safia Rahma",
+    src: "arabic/ghannili.mp3",
+    cover: "cover/safia rahma.png",
+  },
+   {
+    name: "Hadal Ahbek",
+    artist: "Issam Alnajjar",
+    src: "arabic/hadal ahbek.mp3",
+    cover: "cover/issam alnajjar.png",
+  },
+  {
+    name: "Huwannur",
+    artist: "Ai Khodijah",
+    src: "arabic/huwannur.mp3",
+    cover: "cover/ai khodijah.png",
+  },
+  {
+    name: "Insyaallah",
+    artist: "Maher Zain",
+    src: "arabic/insyaallah.mp3",
+    cover: "cover/maher zain.png",
+  },
+  {
+    name: "Kalam Eineh",
+    artist: "Sherine",
+    src: "arabic/kalam eineh.mp3",
+    cover: "cover/sherine.png",
+  },
+   {
+    name: "Kun Anta",
+    artist: "Aseer Ahsan",
+    src: "arabic/kun anta.mp3",
+    cover: "cover/aseer ahsan.png",
+  },
+  {
+    name: "Man Ana",
+    artist: "Hadi Assegaf",
+    src: "arabic/man ana.mp3",
+    cover: "cover/Hadi Assegaf.png",
+  },
+  {
+    name: "Muhammad Nabiku",
+    artist: "Hadad Alwi",
+    src: "arabic/muhammad nabiku.mp3",
+    cover: "cover/hadad alwi.png",
+  },
+  {
+    name: "Muhammad Nabina",
+    artist: "Hamada Helal",
+    src: "arabic/muhammad nabina.mp3",
+    cover: "cover/hamada helal.png",
+  },
+   {
+    name: "Nabi Putra Abdullah",
+    artist: "Ayu Dewi",
+    src: "arabic/nabi putra abdullah.mp3",
+    cover: "cover/ayu dewi.png",
+  },
+  {
+    name: "Nas Teshbehlena",
+    artist: "Maher Zain",
+    src: "arabic/nas teshbehlena.mp3",
+    cover: "cover/maher zain.png",
+  },
+  {
+    name: "Natawassal Bil Hubabah",
+    artist: "Mazro",
+    src: "arabic/natawassal bil hubabah.mp3",
+    cover: "cover/mazro.png",
+  },
+  {
+    name: "Qomarun",
+    artist: "Nissa Sabyan",
+    src: "arabic/qomarun.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+  {
+    name: "Rahmatun Lil'alameen",
+    artist: "Maher Zain",
+    src: "arabic/rahmatun lil'alameen.mp3",
+    cover: "cover/Maher Zain.png",
+  },
+   {
+    name: "Rindu Muhammadku",
+    artist: "Hadad Alwi",
+    src: "arabic/rindu muhammadku.mp3",
+    cover: "cover/hadad alwi.png",
+  },
+  {
+    name: "Rohman Ya Rohman",
+    artist: "Nissa Sabyan",
+    src: "arabic/rohman ya rohman.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+  {
+    name: "Wahdana Dana",
+    artist: "Wafiq Azizah",
+    src: "arabic/wahdana dana.mp3",
+    cover: "cover/wafiq azizah.png",
+  },
+  {
+    name: "Ya Asyiqol Musthofa",
+    artist: "Nissa Sabyan",
+    src: "arabic/ya asyiqol musthofa.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+   {
+    name: "Ya Habibal Qolbi",
+    artist: "Nissa Sabyan",
+    src: "arabic/ya habibal qolbi.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+  {
+    name: "Ya Jamalu",
+    artist: "Nissa Sabyan",
+    src: "arabic/ya jamalu.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+  {
+    name: "Ya Maulana",
+    artist: "Nissa Sabyan",
+    src: "arabic/ya maulana.mp3",
+    cover: "cover/nissa sabyan.png",
+  },
+  {
+    name: "Ya Nabi Salam 'Alayka",
+    artist: "Maher Zain",
+    src: "arabic/ya nabi salam alayka.mp3",
+    cover: "cover/maher zain.png",
+  },
+   {
+    name: "Ya Tarim",
+    artist: "Aishwa Nahla",
+    src: "arabic/ya tarim.mp3",
+    cover: "cover/aishwa nahla.png",
+  },
+  {
+    name: "Yasir Lana (Ilahana)",
+    artist: "Ai Khodijah",
+    src: "arabic/yasir lana (Ilahana).mp3",
+    cover: "cover/ai khodijah.png",
+  },
 ];
