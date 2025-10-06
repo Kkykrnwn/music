@@ -229,6 +229,12 @@ const jawaPlaylist = [
         cover: "cover/nresnani.png"
     },
     {
+        name: "Papipapipu",
+        artist: "Icha Cellow",
+        src: "jawa/papipapipu.mp3",
+        cover: "cover/papipapipu.png"
+    },
+    {
         name: "Pelanggaran",
         artist: "Guyon Waton",
         src: "jawa/pelanggaran.mp3",
@@ -257,6 +263,12 @@ const jawaPlaylist = [
         artist: "Happy Asmara",
         src: "jawa/rungkad.mp3",
         cover: "cover/rungkad.png"
+    },
+    {
+        name: "Sabar (sinau bareng)",
+        artist: "Sadewok",
+        src: "jawa/sabar.mp3",
+        cover: "cover/sabar.png"
     },
     {
         name: "Saktenane",
