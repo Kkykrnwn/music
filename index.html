@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" oncontextmenu="return false">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#1bb566"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Pemutar Musik</title>
+  <link rel="icon" href="https://kkykrnwn.github.io/find-me/images/icon.png" type="image/png" />
+  <style>
+    :root {
+      --glow1: #ff0080; --glow2: #ff8000; --glow3: #00ffcc; --glow4: #0080ff;
+      --bg-color: #121212; --text-color: #ffffff; --hacker-color: #00ff00;
+      --panel-bg: rgba(255, 255, 255, 0.08); --lyric-color: #00ffcc;
+      --bar-bg: rgba(255, 255, 255, 0.2);
+    }
+    body.light { 
+      --bg-color: #ffffff; --text-color: #000000; --hacker-color: #000000;
+      --panel-bg: rgba(0, 0, 0, 0.05); --lyric-color: #ff0080;
+      --bar-bg: rgba(0, 0, 0, 0.2);
+    }
+    * { 
+      box-sizing: border-box; 
+      touch-action: manipulation; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+    }
+    body {
+      font-family: sans-serif; margin: 0; padding: 0;
+      background-color: var(--bg-color); transition: 0.3s; color: var(--text-color);
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .music-container {
+      width: 90%; max-width: 400px; text-align: center;
+      padding: 25px; border-radius: 20px; background-color: var(--panel-bg);
+      position: relative; box-shadow: 0 0 25px var(--glow1);
+      animation: glowRGBBright 5s ease-in-out infinite; margin: 20px; z-index: 5;
+      border: 2px solid var(--glow1);
+    }
+    .vu-meter-pro {
+      position: absolute; top: 15px; left: 15px;
+      display: flex; gap: 6px; height: 75px; 
+      align-items: flex-end; z-index: 10; padding: 6px; 
+      background: rgba(0,0,0,0.4); border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .vu-bar-unit { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; width: 11px; }
+    .vu-bar-fill {
+      width: 100%; height: 2%; border-radius: 2px;
+      transition: height 0.1s ease-out;
+      background: linear-gradient(to top, #00ff00 0%, #ffff00 50%, #ff0000 100%);
+    }
+    .vu-small-label { font-size: 8px; margin-top: 4px; color: var(--hacker-color); font-weight: bold; font-family: monospace; }
+    @keyframes glowRGBBright {
+      0%   { box-shadow: 0 0 25px var(--glow1); border-color: var(--glow1); }
+      25%  { box-shadow: 0 0 25px var(--glow2); border-color: var(--glow2); }
+      50%  { box-shadow: 0 0 25px var(--glow3); border-color: var(--glow3); }
+      75%  { box-shadow: 0 0 25px var(--glow4); border-color: var(--glow4); }
+      100% { box-shadow: 0 0 25px var(--glow1); border-color: var(--glow1); }
+    }
+    .hacker-top-bar {
+      position: fixed; top: 10px; left: 0; right: 0;
+      display: flex; justify-content: space-between;
+      padding: 0 25px; font-family: 'Courier New', monospace;
+      color: var(--hacker-color); font-size: 15px; z-index: 1000; font-weight: bold;
+    }
+    
+    .theme-toggle { position: absolute; top: 15px; right: 20px; cursor: pointer; z-index: 10; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; color: var(--text-color); opacity: 0.8; }
+    .theme-toggle svg { width: 100%; height: 100%; fill: currentColor; }
+    
+    .controls { display: flex; justify-content: center; gap: 15px; margin: 10px 0; align-items: center; }
+    .controls button { background: none; border: none; color: inherit; cursor: pointer; transition: 0.2s; padding: 5px; display: flex; align-items: center; justify-content: center; }
+    .controls svg { width: 30px; height: 30px; fill: currentColor; } 
+    #play svg { width: 42px; height: 42px; } 
+    
+    .bottom-controls { display: flex; justify-content: center; margin: 5px 0; }
+    .bottom-controls button { 
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+      color: inherit; cursor: pointer; transition: 0.2s; padding: 6px 14px; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bottom-controls svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* CSS INFO OUTPUT */
+    .output-row { display: flex; justify-content: center; margin: 10px 0 5px 0; width: 100%; }
+    .output-info {
+      display: flex; align-items: center; gap: 6px; font-size: 11px; 
+      color: var(--glow3); font-weight: bold; padding: 5px 12px; 
+      border-radius: 15px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0, 255, 204, 0.2); cursor: pointer; transition: 0.3s;
+    }
+    .output-info:active { transform: scale(0.95); background: rgba(0, 255, 204, 0.1); }
+    .output-info svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .song-title { font-weight: bold; font-size: 18px; margin-top: 10px; min-height: 24px; }
+    .song-artist { font-size: 13px; color: var(--glow3); opacity: 0.8; margin-bottom: 10px; min-height: 18px; font-style: italic; }
+    
+    .cover-container {
+      margin: 15px auto; width: 190px; height: 190px;
+      border-radius: 50%; overflow: hidden; border: 3px solid transparent;
+      animation: glowRGBBright 5s ease-in-out infinite;
+      position: relative;
+    }
+    #cover-wrapper {
+      width: 100%; height: 100%;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cover { 
+      width: 100%; height: 100%; object-fit: cover; border-radius: 50%; 
+      position: absolute; top: 0; left: 0;
+      transition: transform 0.5s ease-in-out;
+      pointer-events: none;
+    }
+    .rotate { animation: rotate 15s linear infinite; }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    .progress-info { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; width: 100%; }
+    #progress { flex: 1; margin: 0 10px; cursor: pointer; accent-color: var(--glow3); height: 6px; border-radius: 5px; outline: none; }
+    
+    #playlist { 
+      list-style: none; padding: 0; max-height: 180px; overflow-y: auto; 
+      margin: 10px auto; width: 100%; background-color: var(--panel-bg); 
+      border-radius: 10px; transition: all 0.4s ease;
+      overscroll-behavior: contain; 
+    }
+    #playlist.hidden { max-height: 0; opacity: 0; overflow: hidden; margin: 0; }
+    #playlist li { 
+      padding: 10px 15px; cursor: pointer; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(127,127,127,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    #playlist li.playing { font-weight: bold; border-left: 4px solid var(--glow3); background: rgba(255,255,255,0.05); }
+    .add-to-queue {
+      font-size: 11px; color: var(--glow3); padding: 3px 6px; 
+      border: 1px solid rgba(0, 255, 204, 0.4); border-radius: 4px;
+      transition: 0.3s; opacity: 0.6;
+    }
+    .add-to-queue:hover { background: var(--glow3); color: var(--bg-color); opacity: 1; transform: scale(1.1); }
+    .add-to-queue.active { background: var(--glow3); color: var(--bg-color); opacity: 1; border-color: var(--glow3); }
+    .playlist-select-container { margin: 15px auto; position: relative; width: 100%; }
+    .custom-dropdown-header { padding: 10px 15px; border-radius: 10px; background-color: var(--panel-bg); color: var(--text-color); border: 1px solid var(--glow1); font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; position: relative; }
+    .custom-dropdown-header .arrow { position: absolute; right: 15px; transition: 0.3s; transform: rotate(0deg); }
+    .custom-dropdown-header .arrow.rotated { transform: rotate(-90deg); }
+    .custom-dropdown-content { 
+      position: absolute; bottom: 100%; left: 0; width: 100%; 
+      background-color: var(--bg-color); border: 1px solid var(--glow2); border-radius: 10px; 
+      max-height: 0; overflow-y: auto; z-index: 999; list-style: none; padding: 0; margin-bottom: 5px; 
+      transition: all 0.3s ease; opacity: 0;
+    }
+    .custom-dropdown-content.show { max-height: 200px; opacity: 1; padding: 5px 0; }
+    .custom-dropdown-content li { padding: 10px 15px; cursor: pointer; text-align: left; font-size: 13px; }
+    .info-container { height: 25px; margin-top: 5px; position: relative; }
+    .info-text { 
+      position: absolute; left: 50%; transform: translateX(-50%);
+      padding: 4px 12px; border-radius: 15px; background: var(--text-color); color: var(--bg-color); 
+      font-size: 11px; font-weight: bold; animation: fadeOutInfo 5s ease forwards;
+    }
+    @keyframes fadeOutInfo { 0% { opacity: 0; transform: translate(-50%, 5px); } 5% { opacity: 1; transform: translate(-50%, 0); } 90% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -5px); } }
+    .lyrics-container { margin-top: 20px; padding-top: 15px; min-height: 80px; border-top: 1px solid rgba(127,127,127,0.2); display: flex; justify-content: center; align-items: center; }
+    #lyrics-display { font-size: 15px; font-weight: bold; color: var(--lyric-color); text-shadow: 0 0 10px var(--lyric-color); line-height: 1.5; transition: 0.3s; width: 100%; text-align: center; }
+    #dropdown-toggle { background:none; border:1px solid var(--glow3); color:inherit; padding:8px 15px; border-radius:8px; cursor:pointer; margin: 10px auto; display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: bold; width: 60%; transition: 0.3s; }
+    #dropdown-toggle .toggle-arrow { transition: 0.3s; display: inline-block; transform: rotate(0deg); }
+    #dropdown-toggle.active .toggle-arrow { transform: rotate(-90deg); }
+  </style>
+</head>
+<body onselectstart="return false">
+  <div class="hacker-top-bar"><div id="clock">00:00:00</div><div id="date">Loading...</div></div>
+  <div class="music-container">
+    <div class="vu-meter-pro">
+      <div class="vu-bar-unit"><div id="vub-mus" class="vu-bar-fill"></div><span class="vu-small-label">MUS</span></div>
+      <div class="vu-bar-unit"><div id="vub-voc" class="vu-bar-fill"></div><span class="vu-small-label">VOC</span></div>
+    </div>
+
+    <div class="theme-toggle" id="theme-toggle">
+      <svg id="theme-svg" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9s9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26a5.403 5.403 0 0 1-3.14-9.8c.44-.06.9-.1 1.36-.1c.46 0 .91.04 1.36.1C11.08 3.04 11.54 3 12 3z"/></svg>
+    </div>
+    
+    <div id="song-title" class="song-title">Memuat...</div>
+    <div id="song-artist" class="song-artist">Penyanyi</div>
+    <div class="cover-container"><div id="cover-wrapper"><img src="" id="cover" class="cover" /></div></div>
+    
+    <div class="progress-info">
+      <span id="current-time">0:00</span>
+      <input type="range" id="progress" value="0" step="0.1" />
+      <span id="duration">0:00</span>
+    </div>
+    
+    <div class="controls">
+      <button id="prev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button id="play"><svg viewBox="0 0 24 24" id="play-svg"><path d="M8 5.14v14l11-7-11-7z"/></svg></button>
+      <button id="next"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    </div>
+    
+    <div class="bottom-controls">
+      <button id="mode">
+        <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55c-2.21 0-4 1.79-4 4s1.79 4 4 4s4-1.79 4-4V7h4V3h-6z"/></svg>
+      </button>
+    </div>
+
+    <div class="output-row">
+        <div class="output-info" id="output-info" onclick="detectOutput()">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>
+            <span id="output-name">Internal Audio</span>
+        </div>
+    </div>
+    
+    <div class="info-container" id="info-container"></div>
+    <div class="playlist-select-container">
+        <div class="custom-dropdown-header" id="custom-playlist-header"><span id="selected-playlist-name">Pilih Playlist</span><span class="arrow">▼</span></div>
+        <ul class="custom-dropdown-content" id="custom-playlist-content"></ul>
+    </div>
+    <button id="dropdown-toggle">Daftar Lagu <span class="toggle-arrow">▼</span></button>
+    <ul id="playlist" class="hidden"></ul>
+    <div class="lyrics-container"><div id="lyrics-display">Lirik akan ditampilkan disini</div></div>
+  </div>
+  <audio id="audio" crossorigin="anonymous"></audio>
+
+  <script src="arabic.js"></script><script src="jawa.js"></script><script src="old.js"></script><script src="new.js"></script>
+
+  <script>
+    /* ANTI-COPY & INSPECT */
+    document.onkeydown = function(e) {
+      if(e.keyCode == 123 || (e.ctrlKey && (e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) || (e.ctrlKey && e.keyCode == 85) || (e.ctrlKey && e.keyCode == 83)) {
+        return false;
+      }
+    };
+
+    const SVG_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.14v14l11-7-11-7z"/></svg>';
+    const SVG_PAUSE = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+    const SVG_SUN = '<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5s5-2.24 5-5s-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0a.996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0a.996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-12.37a.996.996 0 0 0-1.41 0l-1.06 1.06a.996.996 0 1 0 1.41 1.41l1.06-1.06c.39-.39.39-1.03 0-1.41zm-12.37 12.37a.996.996 0 0 0-1.41 0l-1.06 1.06a.996.996 0 1 0 1.41 1.41l1.06-1.06c.39-.39.39-1.03 0-1.41z"/></svg>';
+    const SVG_MOON = '<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9s9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26a5.403 5.403 0 0 1-3.14-9.8c.44-.06.9-.1 1.36-.1c.46 0 .91.04 1.36.1C11.08 3.04 11.54 3 12 3z"/></svg>';
+
+    const SVG_MODES = [
+      '<svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55c-2.21 0-4 1.79-4 4s1.79 4 4 4s4-1.79 4-4V7h4V3h-6z"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/><path d="M11 10h1v3h-1z"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>'
+    ];
+
+    const allPlaylists = { "arabic": typeof arabicPlaylist !== 'undefined' ? arabicPlaylist : null, "jawa": typeof jawaPlaylist !== 'undefined' ? jawaPlaylist : null, "old": typeof oldPlaylist !== 'undefined' ? oldPlaylist : null, "new": typeof newPlaylist !== 'undefined' ? newPlaylist : null };
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const modeBtn = document.getElementById('mode');
+    const lyricsDisplay = document.getElementById('lyrics-display');
+    const songListElement = document.getElementById('playlist');
+    const dropdownToggle = document.getElementById('dropdown-toggle');
+    const progressBar = document.getElementById('progress');
+    const barMus = document.getElementById('vub-mus');
+    const barVoc = document.getElementById('vub-voc');
+    const coverWrapper = document.getElementById('cover-wrapper');
+
+    let isPlaying = false;
+    let hasStarted = false; 
+    let playMode = 0; 
+    let currentSongs = []; 
+    let currentPlaylistName = ""; 
+    let activePlaylistName = ""; 
+    let activeSongIndex = 0; 
+    let lyricsData = [];
+    let customQueue = []; 
+    let playbackHistory = []; 
+    let unplayedSongs = [];   
+    let hasRepeatedOnce = false;
+
+    // --- LOGIC DETEKSI OUTPUT (TANPA MIC) ---
+    async function detectOutput() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const outputs = devices.filter(d => d.kind === 'audiooutput');
+            const nameTag = document.getElementById('output-name');
+            
+            // Mencari perangkat bluetooth yang aktif
+            const bluetooth = outputs.find(d => d.deviceId !== 'default' && d.deviceId !== 'communications');
+
+            if (bluetooth && bluetooth.label !== "") {
+                const cleanName = bluetooth.label.replace(/(\(.*\))/g, '').substring(0, 15);
+                nameTag.textContent = cleanName;
+                showInfo("Device: " + cleanName);
+            } else if (outputs.length > 1) {
+                nameTag.textContent = "External Audio";
+                showInfo("Perangkat Luar Terdeteksi");
+            } else {
+                nameTag.textContent = "Internal Audio";
+                showInfo("Menggunakan Speaker HP");
+            }
+        } catch (err) {
+            console.log("Detection skip");
+        }
+    }
+
+    // Jalankan saat musik mulai
+    audio.onplay = () => {
+        detectOutput();
+    };
+
+    // --- VISUALIZER ---
+    let audioCtx, analyser, dataArray;
+    function initVisualizer() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      const source = audioCtx.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.fftSize = 256;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      draw();
+    }
+    function draw() {
+      requestAnimationFrame(draw);
+      if(!isPlaying) { barMus.style.height = "2%"; barVoc.style.height = "2%"; return; }
+      analyser.getByteFrequencyData(dataArray);
+      let bH = (dataArray[2] / 255) * 65;
+      barMus.style.height = Math.max(2, bH) + "%";
+      let vSum = 0; for(let i=10; i<40; i++) vSum += dataArray[i];
+      let vH = ((vSum/30) / 255) * 85;
+      barVoc.style.height = Math.max(2, Math.min(vH, 92)) + "%";
+    }
+
+    function updateMediaMetadata(song) {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.name,
+          artist: song.artist || song.album || activePlaylistName.toUpperCase(),
+          artwork: [{ src: song.cover || "https://kkykrnwn.github.io/find-me/images/icon.png", sizes: '512x512', type: 'image/png' }]
+        });
+        navigator.mediaSession.setActionHandler('play', playSong);
+        navigator.mediaSession.setActionHandler('pause', pauseSong);
+        navigator.mediaSession.setActionHandler('previoustrack', prevSong);
+        navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+      }
+    }
+
+    audio.ontimeupdate = () => {
+      if (!isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 0) {
+        progressBar.value = (audio.currentTime / audio.duration) * 100;
+        document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+        document.getElementById('duration').textContent = formatTime(audio.duration);
+      }
+      if (lyricsData.length > 0) {
+        const active = lyricsData.filter(l => l.time <= audio.currentTime).pop();
+        if (active) lyricsDisplay.innerHTML = active.text;
+      }
+    };
+
+    function playSong() {
+      initVisualizer();
+      if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      if(!hasStarted) { 
+        const songsToUse = allPlaylists[activePlaylistName];
+        fetchLyrics(songsToUse[activeSongIndex].src.split('/').pop().replace('.mp3', '')); 
+      }
+      hasStarted = true; 
+      audio.play().then(() => { 
+        isPlaying = true; 
+        playBtn.innerHTML = SVG_PAUSE;
+        const currentCover = coverWrapper.querySelector('.cover');
+        if (currentCover) {
+            currentCover.classList.add('rotate');
+            currentCover.style.animationPlayState = 'running';
+        }
+      }).catch(pauseSong);
+    }
+
+    function pauseSong() { 
+      audio.pause(); 
+      isPlaying = false; 
+      playBtn.innerHTML = SVG_PLAY;
+      const currentCover = coverWrapper.querySelector('.cover');
+      if (currentCover) {
+          currentCover.style.animationPlayState = 'paused';
+      }
+    }
+
+    function loadSong(index, fromPlaylist = null, direction = null) {
+      if (fromPlaylist) activePlaylistName = fromPlaylist;
+      activeSongIndex = index;
+      const song = allPlaylists[activePlaylistName][activeSongIndex];
+      if (!song) return;
+
+      const oldCover = coverWrapper.querySelector('.cover');
+      if (direction && oldCover) {
+          const newCover = document.createElement('img');
+          newCover.className = 'cover';
+          newCover.src = song.cover || "https://kkykrnwn.github.io/find-me/images/icon.png";
+          newCover.style.animationPlayState = 'paused';
+          newCover.style.transform = direction === 'next' ? 'translateX(100%)' : 'translateX(-100%)';
+          coverWrapper.appendChild(newCover);
+          setTimeout(() => {
+              oldCover.style.transform = direction === 'next' ? 'translateX(-100%)' : 'translateX(100%)';
+              newCover.style.transform = 'translateX(0)';
+          }, 50);
+          setTimeout(() => {
+              if (oldCover.parentNode) coverWrapper.removeChild(oldCover);
+              newCover.id = 'cover';
+              if (isPlaying) {
+                  newCover.classList.add('rotate');
+                  newCover.style.animationPlayState = 'running';
+              }
+          }, 550);
+      } else {
+          coverWrapper.innerHTML = `<img src="${song.cover || 'https://kkykrnwn.github.io/find-me/images/icon.png'}" id="cover" class="cover ${isPlaying ? 'rotate' : ''}" style="animation-play-state: ${isPlaying ? 'running' : 'paused'};">`;
+      }
+
+      audio.src = song.src;
+      document.getElementById('song-title').textContent = song.name;
+      document.getElementById('song-artist').textContent = song.artist || activePlaylistName.toUpperCase();
+      playbackHistory.push({ playlist: activePlaylistName, index: activeSongIndex });
+      if(hasStarted) { fetchLyrics(song.src.split('/').pop().replace('.mp3', '')); } 
+      else { lyricsData = []; lyricsDisplay.textContent = "Lirik akan ditampilkan disini"; }
+      updateMediaMetadata(song);
+      renderSongList();
+    }
+
+    function nextSong() {
+      const activeSongs = allPlaylists[activePlaylistName];
+      if (customQueue.length > 0) {
+        const nextInQueue = customQueue.shift();
+        loadSong(nextInQueue.index, nextInQueue.playlist, 'next');
+      } else {
+        let nextIndex;
+        if (playMode === 3) { 
+          if (unplayedSongs.length === 0) unplayedSongs = Array.from(Array(activeSongs.length).keys()); 
+          nextIndex = unplayedSongs.splice(Math.floor(Math.random() * unplayedSongs.length), 1)[0]; 
+        } else { nextIndex = (activeSongIndex + 1) % activeSongs.length; }
+        loadSong(nextIndex, null, 'next');
+      }
+      playSong();
+    }
+
+    function prevSong() {
+      const activeSongs = allPlaylists[activePlaylistName];
+      if (playbackHistory.length > 1) { 
+        playbackHistory.pop(); 
+        const prev = playbackHistory.pop();
+        loadSong(prev.index, prev.playlist, 'prev');
+      } else { 
+        let prevIndex = (activeSongIndex - 1 + activeSongs.length) % activeSongs.length;
+        loadSong(prevIndex, null, 'prev'); 
+      }
+      playSong();
+    }
+
+    audio.onended = () => { 
+      if (customQueue.length > 0) { nextSong(); return; }
+      if (playMode === 1) { 
+        if (!hasRepeatedOnce) { hasRepeatedOnce = true; audio.currentTime = 0; playSong(); } 
+        else { hasRepeatedOnce = false; nextSong(); } 
+      } else if (playMode === 2) { audio.currentTime = 0; playSong(); } 
+      else { nextSong(); } 
+    };
+
+    function formatTime(t) { const m = Math.floor(t / 60) || 0; const s = Math.floor(t % 60) || 0; return `${m}:${s < 10 ? '0' : ''}${s}`; }
+    function showInfo(text) { const container = document.getElementById('info-container'); container.innerHTML = `<div class="info-text">${text}</div>`; }
+    function closeAllMenus() { songListElement.classList.add('hidden'); dropdownToggle.classList.remove('active'); document.getElementById('custom-playlist-content').classList.remove('show'); document.getElementById('custom-playlist-header').querySelector('.arrow').classList.remove('rotated'); }
+
+    function renderSongList() {
+      songListElement.innerHTML = '';
+      currentSongs.forEach((song, index) => {
+        const li = document.createElement('li');
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = song.name;
+        const isCurrentPlaying = (activePlaylistName === currentPlaylistName && index === activeSongIndex);
+        li.appendChild(titleSpan);
+        if (!isCurrentPlaying) {
+          const queueBtn = document.createElement('span');
+          queueBtn.className = 'add-to-queue';
+          if (customQueue.some(q => q.playlist === currentPlaylistName && q.index === index)) queueBtn.classList.add('active');
+          queueBtn.innerHTML = '➕';
+          queueBtn.onclick = (e) => { e.stopPropagation(); toggleQueue(currentPlaylistName, index); };
+          li.appendChild(queueBtn);
+        }
+        li.onclick = (e) => { 
+            e.stopPropagation(); 
+            const dir = (currentPlaylistName === activePlaylistName && index > activeSongIndex) ? 'next' : null;
+            loadSong(index, currentPlaylistName, dir);
+            playSong(); 
+            closeAllMenus(); 
+        };
+        if (isCurrentPlaying) li.classList.add('playing');
+        songListElement.appendChild(li);
+      });
+    }
+
+    function toggleQueue(playlistName, index) {
+      const song = allPlaylists[playlistName][index];
+      const existingIdx = customQueue.findIndex(q => q.playlist === playlistName && q.index === index);
+      if (existingIdx > -1) {
+        customQueue.splice(existingIdx, 1);
+        showInfo("Dibatalkan: " + song.name);
+      } else {
+        customQueue.push({ playlist: playlistName, index: index, name: song.name });
+        showInfo("Antrean: " + song.name);
+      }
+      renderSongList();
+    }
+
+    function populateDropdown() {
+      const content = document.getElementById('custom-playlist-content');
+      content.innerHTML = '';
+      for (const name in allPlaylists) {
+        if(!allPlaylists[name]) continue;
+        const li = document.createElement('li');
+        li.textContent = name.toUpperCase();
+        li.onclick = (e) => { e.stopPropagation(); loadPlaylist(name); closeAllMenus(); };
+        content.appendChild(li);
+      }
+      const firstValid = Object.keys(allPlaylists).find(k => allPlaylists[k] !== null);
+      if(firstValid) loadPlaylist(firstValid);
+    }
+
+    function loadPlaylist(name) {
+      currentPlaylistName = name;
+      currentSongs = allPlaylists[name];
+      document.getElementById('selected-playlist-name').textContent = name.toUpperCase();
+      renderSongList();
+      if (!hasStarted) { activePlaylistName = name; activeSongIndex = 0; loadSong(0, name); } 
+      else { showInfo("Melihat Playlist: " + name.toUpperCase()); }
+    }
+
+    function fetchLyrics(fileName) {
+      lyricsData = []; lyricsDisplay.textContent = "Mencari lirik...";
+      const old = document.getElementById('dynamic-lyric'); if (old) old.remove();
+      const script = document.createElement('script'); script.id = 'dynamic-lyric'; script.src = `${fileName}.js`;
+      script.onerror = () => { lyricsDisplay.textContent = "Lirik tidak ditemukan"; };
+      document.body.appendChild(script);
+    }
+
+    progressBar.oninput = () => { if(!isNaN(audio.duration)) audio.currentTime = (progressBar.value / 100) * audio.duration; };
+    dropdownToggle.onclick = (e) => { e.stopPropagation(); const isHidden = songListElement.classList.contains('hidden'); if (isHidden) { songListElement.classList.remove('hidden'); dropdownToggle.classList.add('active'); renderSongList(); } else { closeAllMenus(); } };
+    document.getElementById('custom-playlist-header').onclick = (e) => { e.stopPropagation(); const isS = document.getElementById('custom-playlist-content').classList.contains('show'); closeAllMenus(); if(!isS){ document.getElementById('custom-playlist-content').classList.add('show'); document.getElementById('custom-playlist-header').querySelector('.arrow').classList.add('rotated'); } };
+    document.addEventListener('click', closeAllMenus);
+    playBtn.onclick = () => { isPlaying ? pauseSong() : playSong(); };
+    document.getElementById('next').onclick = nextSong;
+    document.getElementById('prev').onclick = prevSong;
+    document.getElementById('theme-toggle').onclick = () => { const isLight = document.body.classList.toggle('light'); document.getElementById('theme-toggle').innerHTML = isLight ? SVG_SUN : SVG_MOON; };
+    modeBtn.onclick = () => { playMode = (playMode + 1) % 4; const modeTexts = ['🎶 Berurutan', '🔂 Ulang 1x', '🔁 Ulang Terus', '🔀 Acak']; showInfo(modeTexts[playMode]); modeBtn.innerHTML = SVG_MODES[playMode]; };
+    function updateDateTime() { const now = new Date(); document.getElementById("clock").textContent = now.toLocaleTimeString('id-ID'); document.getElementById("date").textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' }); }
+    setInterval(updateDateTime, 1000);
+    populateDropdown();
+    window.addEventListener('blur', () => { if(isPlaying) audio.play(); });
+  </script>
+</body>
+</html>
