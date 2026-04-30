@@ -614,13 +614,25 @@ function prevSong() {
       else showInfo("Melihat Playlist: " + name.toUpperCase());
     }
 
-    function fetchLyrics(fileName) {
-      lyricsData = []; lyricsDisplay.textContent = "Mencari lirik...";
-      const old = document.getElementById('dynamic-lyric'); if (old) old.remove();
-      const script = document.createElement('script'); script.id = 'dynamic-lyric'; script.src = `${fileName}.js`;
-      script.onerror = () => { lyricsDisplay.textContent = "Lirik tidak ditemukan"; };
-      document.body.appendChild(script);
-    }
+function fetchLyrics(fileName) {
+  lyricsData = []; 
+  lyricsDisplay.textContent = "Mencari lirik...";
+  
+  const old = document.getElementById('dynamic-lyric'); 
+  if (old) old.remove(); 
+  
+  const script = document.createElement('script'); 
+  script.id = 'dynamic-lyric'; 
+  
+  // Mengarahkan pencarian ke folder 'lirik'
+  script.src = `lirik/${fileName}.js`; 
+  
+  script.onerror = () => { 
+    lyricsDisplay.textContent = "Lirik tidak ditemukan"; 
+  };
+  
+  document.body.appendChild(script);
+}
 
     progressBar.oninput = () => { 
         if(isChangingSong || isNaN(audio.duration)) return;
