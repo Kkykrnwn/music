@@ -1,0 +1,38 @@
+// File: crito mustahil.js
+lyricsData = [
+  { time: 0, text: "--- Guyon Waton - Crito Mustahil ---" },
+  { time: 14.84, text: "Aku wis tau" },
+  { time: 20.29, text: "Ngrasakne jerune kedanan" },
+  { time: 28.10, text: "Ngrasakne bundase kelaran" },
+  { time: 36.27, text: "Ngrasakne nangisi ning ra ketaran ho" },
+  { time: 44.73, text: "Aku ngiyani" },
+  { time: 50.69, text: "Omongmu seng kesel jalani" },
+  { time: 57.96, text: "Misal memang keputusanmu" },
+  { time: 66.54, text: "Tak lilak-lilakne kelangan awakmu" },
+  { time: 76.92, text: "Mung pengen ngandani" },
+  { time: 84.07, text: "Sadar aku du seleramu saiki" },
+  { time: 92.23, text: "Mung pengen negesi" },
+  { time: 98.99, text: "Ati-ati yen kangen kabari" },
+  { time: 109.32, text: "Ra maksane niat gandeng mu ro aku" },
+  { time: 116.68, text: "Cerito iki cerito mustahil nggo aku" },
+  { time: 124.44, text: "Karep ati mastekne kabeh senengmu" },
+  { time: 131.91, text: "Ning sanding mu ra bakal ngilang" },
+  { time: 139.23, text: "Kembang ngipi saben wengi" },
+  { time: 143.26, text: "Ra nyongko luput tak nduweni" },
+  { time: 147.65, text: "Mugo lungo ku nglegakne atimu" },
+
+  // Bagian Reff Kedua
+  { time: 189.28, text: "Mung pengen ngandani" },
+  { time: 196.24, text: "Sadar aku du seleramu saiki" },
+  { time: 204.48, text: "Mung pengen negesi" },
+  { time: 211.49, text: "Ati-ati yen kangen kabari" },
+  { time: 221.69, text: "Ra maksane niat gandeng mu ro aku" },
+  { time: 229.25, text: "Cerito iki cerito mustahil nggo aku" },
+  { time: 237.13, text: "Karep ati mastekne kabeh senengmu" },
+  { time: 244.12, text: "Ning sanding mu ra bakal ngilang" },
+  { time: 252.26, text: "Kembang ngipi saben wengi" },
+  { time: 255.92, text: "Ra nyongko luput tak nduweni" },
+  { time: 260.23, text: "Mugo lungo ku nglegakne atimu" },
+  { time: 267.73, text: "Mugo lungo ku nglegakne atimu" },
+  { time: 275.00, text: "--- Selesai ---" }
+];

@@ -271,7 +271,10 @@
   </div>
   <audio id="audio" crossorigin="anonymous"></audio>
 
-  <script src="arabic.js"></script><script src="jawa.js"></script><script src="old.js"></script><script src="new.js"></script>
+  <script src="playlist/arabic.js"></script>
+  <script src="playlist/jawa.js"></script>
+  <script src="playlist/old.js"></script>
+  <script src="Playlist/new.js"></script>
 
   <script>
     const SVG_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.14v14l11-7-11-7z"/></svg>';
@@ -301,8 +304,11 @@
     const tonearmRod = document.getElementById('tonearm-rod');
 
     let isPlaying = false, hasStarted = false, playMode = 0, currentSongs = [], currentPlaylistName = "", activePlaylistName = "", activeSongIndex = 0;
-    let lyricsData = [], customQueue = [], playbackHistory = [], unplayedSongs = [], btShortcutEnabled = true, isChangingSong = false;
-    
+// Ganti baris let lyricsData = [], customQueue = ... dengan ini:
+let lyricsData = [], customQueue = [], playbackHistory = [], unplayedSongs = [], btShortcutEnabled = true, isChangingSong = false;
+let shuffleStack = []; // Menyimpan urutan lagu yang sudah diacak
+let shuffleIndex = -1; // Menunjuk posisi saat ini di dalam stack acak
+
     /* ANGLES: Rest (-28), Start (0 = benar benar ujung luar), End (26 = mepet cover) {besi penunjuk} */
     const ARM_ANGLES = { rest: 100, start: 1, end: 26.5 };
 
@@ -408,6 +414,21 @@
       if (fromPlaylist) activePlaylistName = fromPlaylist;
       activeSongIndex = index;
       const song = allPlaylists[activePlaylistName][activeSongIndex];
+
+
+if (direction === 'next' || direction === 'prev') {
+    // Biarkan stack dikelola oleh fungsi nextSong/prevSong
+} else {
+    // Jika user klik manual dari playlist, buat jalan baru (reset shuffle stack)
+    if (playMode === 3) {
+        shuffleStack = [{ index: index, playlist: activePlaylistName }];
+        shuffleIndex = 0;
+        unplayedSongs = Array.from(Array(allPlaylists[activePlaylistName].length).keys());
+        const usedIdx = unplayedSongs.indexOf(index);
+        if (usedIdx > -1) unplayedSongs.splice(usedIdx, 1);
+    }
+}
+
       if (!song) { isChangingSong = false; return; }
       
       const wasPlaying = isPlaying;
@@ -478,30 +499,62 @@
         return disk;
     }
 
-    function nextSong() {
-      if(isChangingSong) return;
-      const songs = allPlaylists[activePlaylistName];
-      if (customQueue.length > 0) {
-        const next = customQueue.shift();
-        loadSong(next.index, next.playlist, 'next');
-      } else {
-        let idx;
-        if (playMode === 3) { 
-          if (unplayedSongs.length === 0) unplayedSongs = Array.from(Array(songs.length).keys()); 
-          idx = unplayedSongs.splice(Math.floor(Math.random() * unplayedSongs.length), 1)[0]; 
-        } else idx = (activeSongIndex + 1) % songs.length;
-        loadSong(idx, null, 'next');
-      }
-    }
+function nextSong() {
+  if (isChangingSong) return;
+  const songs = allPlaylists[activePlaylistName];
+  
+  if (customQueue.length > 0) {
+    const next = customQueue.shift();
+    loadSong(next.index, next.playlist, 'next');
+    return;
+  }
 
-    function prevSong() {
-      if(isChangingSong) return;
-      const songs = allPlaylists[activePlaylistName];
-      if (playbackHistory.length > 1) { 
-        playbackHistory.pop(); const prev = playbackHistory.pop();
-        loadSong(prev.index, prev.playlist, 'prev');
-      } else loadSong((activeSongIndex - 1 + songs.length) % songs.length, null, 'prev');
+  if (playMode === 3) { // MODE ACAK (SHUFFLE)
+    // Jika kita sedang berada di posisi "mundur", maka maju mengikuti urutan yang sudah ada
+    if (shuffleIndex < shuffleStack.length - 1) {
+      shuffleIndex++;
+      const nextFromStack = shuffleStack[shuffleIndex];
+      loadSong(nextFromStack.index, nextFromStack.playlist, 'next');
+    } else {
+      // Gali lubang baru (acak lagu baru)
+      if (unplayedSongs.length === 0) {
+        unplayedSongs = Array.from(Array(songs.length).keys());
+      }
+      const randomIndex = Math.floor(Math.random() * unplayedSongs.length);
+      const songIdx = unplayedSongs.splice(randomIndex, 1)[0];
+      
+      // Simpan ke stack agar bisa di-prev
+      shuffleStack.push({ index: songIdx, playlist: activePlaylistName });
+      shuffleIndex++;
+      
+      loadSong(songIdx, null, 'next');
     }
+  } else { 
+    // MODE NORMAL
+    let idx = (activeSongIndex + 1) % songs.length;
+    loadSong(idx, null, 'next');
+  }
+}
+
+
+function prevSong() {
+  if (isChangingSong) return;
+  const songs = allPlaylists[activePlaylistName];
+
+  if (playMode === 3) { // MODE ACAK
+    if (shuffleIndex > 0) {
+      shuffleIndex--;
+      const prevFromStack = shuffleStack[shuffleIndex];
+      loadSong(prevFromStack.index, prevFromStack.playlist, 'prev');
+    } else {
+      showInfo("Sudah di batas awal acak");
+      // Tetap di lagu yang sama (stuck)
+    }
+  } else { 
+    // MODE NORMAL (Naik ke musik atasnya)
+    loadSong((activeSongIndex - 1 + songs.length) % songs.length, null, 'prev');
+  }
+}
 
     audio.onended = () => { 
       if (customQueue.length > 0) { nextSong(); return; }
@@ -582,7 +635,20 @@
     document.getElementById('next').onclick = nextSong;
     document.getElementById('prev').onclick = prevSong;
     document.getElementById('theme-toggle').onclick = () => { const isL = document.body.classList.toggle('light'); document.getElementById('theme-toggle').innerHTML = isL ? SVG_SUN : SVG_MOON; };
-    modeBtn.onclick = () => { playMode = (playMode + 1) % 4; const texts = ['🎶 Berurutan', '🔂 Ulang 1x', '🔁 Ulang Terus', '🔀 Acak']; showInfo(texts[playMode]); modeBtn.innerHTML = SVG_MODES[playMode]; };
+    modeBtn.onclick = () => { playMode = (playMode + 1) % 4; const texts = ['🎶 Berurutan', '🔂 Ulang 1x', '🔁 Ulang Terus', '🔀 Acak']; showInfo(texts[playMode]); modeBtn.innerHTML = SVG_MODES[playMode];
+
+    // Reset data acak setiap kali mode berubah ke acak atau dari acak
+    shuffleStack = [];
+    shuffleIndex = -1;
+    if (playMode === 3) {
+        shuffleStack.push({ index: activeSongIndex, playlist: activePlaylistName });
+        shuffleIndex = 0;
+        unplayedSongs = Array.from(Array(allPlaylists[activePlaylistName].length).keys());
+        const usedIdx = unplayedSongs.indexOf(activeSongIndex);
+        if (usedIdx > -1) unplayedSongs.splice(usedIdx, 1);
+    }
+  };
+
     function updateDateTime() { const now = new Date(); document.getElementById("clock").textContent = now.toLocaleTimeString('id-ID'); document.getElementById("date").textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' }); }
     setInterval(updateDateTime, 1000);
     populateDropdown();

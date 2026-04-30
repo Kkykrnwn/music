@@ -49,12 +49,6 @@ const jawaPlaylist = [
         cover: "cover/cerito loro.png"
     },
     {
-        name: "Cintamu Tak Terbatas waktu",
-        artist: "NDX A.K.A",
-        src: "jawa/cintamu tak terbatas waktu.mp3",
-        cover: "cover/ndx.png"
-    },
-    {
         name: "Crito Mustahil",
         artist: "Guyon Waton",
         src: "jawa/crito mustahil.mp3",
@@ -82,7 +76,7 @@ const jawaPlaylist = [
         name: "Full Senyum Sayang",
         artist: "Evan Loss",
         src: "jawa/full senyum sayang.mp3",
-        cover: "cover/full senyum sayang.png"
+        cover: "cover/full senyum sayang.jpg"
     },
     {
         name: "Gampil",
@@ -305,6 +299,12 @@ const jawaPlaylist = [
         artist: "Guyon Waton",
         src: "jawa/sugeng dalu.mp3",
         cover: "cover/sugeng dalu.png"
+    },
+    {
+        name: "Tak Terbatas waktu",
+        artist: "NDX A.K.A",
+        src: "jawa/tak terbatas waktu.mp3",
+        cover: "cover/ndx.png"
     },
     {
         name: "Takdire Pisah",

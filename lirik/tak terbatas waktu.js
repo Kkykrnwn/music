@@ -1,0 +1,40 @@
+// File: tak terbatas waktu.js
+lyricsData = [
+  { time: 0, text: "--- NDX A.K.A - Tak Terbatas Waktu ---" },
+  { time: 7.27, text: "Terkadang aku sempat labil dengan perasaanku" },
+  { time: 10.66, text: "Dan perasaanmu pun juga begitu" },
+  { time: 13.12, text: "Tapi aku, Yonanda Frisna Damara" },
+  { time: 15.31, text: "Akan selalu mencintaimu, Icha Putri Paramita" },
+  { time: 18.35, text: "I love you" },
+  { time: 22.34, text: "Andaikan malam yang sepi dapat bicara" },
+  { time: 30.48, text: "Mungkin aku takkan kesepian" },
+  { time: 38.06, text: "Penantianku ini hanya untukmu" },
+  { time: 46.09, text: "Setiap saat berdoa untukmu" },
+  { time: 52.92, text: "Kesetiaan yang kumiliki" },
+  { time: 57.68, text: "Tak pernah memudar" },
+  { time: 60.83, text: "Cintaku ini untuk dirimu" },
+  { time: 77.78, text: "Ibarat sungai yang kering tiada air (tiada air)" },
+  { time: 85.75, text: "Menanti hujan turun dari langit" },
+  { time: 92.63, text: "Kerinduanku pada dirimu tak pernah berhenti" },
+  { time: 100.47, text: "Walau berjuta godaan mengganggu" },
+  { time: 108.77, text: "Aku cinta kepadamu" },
+  { time: 113.15, text: "Tak terbatas waktu" },
+  { time: 116.76, text: "Takkan ada selain dirimu" },
+  { time: 124.56, text: "Cinta yang t'lah kita bina" },
+  { time: 128.85, text: "Pahit-manis berdua" },
+  { time: 132.36, text: "Demi cintaku hanya untukmu" },
+
+  // Bagian selanjutnya
+  { time: 149.32, text: "Ibarat sungai yang kering tiada air (tiada air)" },
+  { time: 157.19, text: "Menanti hujan turun dari langit" },
+  { time: 164.13, text: "Kerinduanku pada dirimu tak pernah berhenti" },
+  { time: 171.95, text: "Walau berjuta godaan mengganggu" },
+  { time: 180.14, text: "Aku cinta kepadamu" },
+  { time: 184.68, text: "Tak terbatas waktu" },
+  { time: 188.13, text: "Takkan ada selain dirimu" },
+  { time: 195.92, text: "Cinta yang t'lah kita bina" },
+  { time: 200.24, text: "Pahit-manis berdua" },
+  { time: 203.70, text: "Demi cintaku hanya untukmu" },
+  
+  { time: 215.00, text: "--- Selesai ---" }
+];
